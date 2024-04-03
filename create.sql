@@ -1,0 +1,10 @@
+create sequence order_seq start with 1 increment by 50;
+create sequence product_seq start with 1 increment by 50;
+create sequence user_seq start with 1 increment by 50;
+create table image (idimage bigint not null, image varchar(255));
+create table order (id_order bigint not null, order_id bigint, primary key (id_order));
+create table product (price integer not null, id bigint not null, product_id bigint, inscription varchar(255), name_product varchar(255), primary key (id));
+create table user (id_user bigint not null, name_user varchar(255), primary key (id_user));
+alter table if exists image add constraint FKq0r3krbdu07vgjuggrke1ql6l foreign key (idimage) references product;
+alter table if exists order add constraint FKkngig5i57h3221iv8woah8sy1 foreign key (id_order) references user;
+alter table if exists product add constraint FK2lkjhxmy6nitoorp5hm5g9k9n foreign key (id) references order;
