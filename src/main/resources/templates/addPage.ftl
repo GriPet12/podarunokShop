@@ -17,6 +17,7 @@
         Image3:<input type="text" name="image3"><br>
         Image4:<input type="text" name="image4"><br>
         Image5:<input type="text" name="image5"><br>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <button type="submit">Upload</button>
     </form>
 </body>

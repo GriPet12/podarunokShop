@@ -32,9 +32,15 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false)
     private UserRole userRole;
 
-    @Column(nullable = false)
+    @Column
+    private String number;
+
+    @Column
+    private String address;
+
+    @Column
     @OneToMany(mappedBy = "idOrder", fetch = FetchType.EAGER)
-    private List<OrderEntity> order;
+    private List<OrderEntity> orders;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

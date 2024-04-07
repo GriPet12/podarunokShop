@@ -32,7 +32,7 @@ public class ProductController {
     @PostMapping("/add")
     public String addProduct(@ModelAttribute("dto") ProductDto productDto) {
         Long idResult = productService.addProduct(productDto);
-        return "redirect:/product/" + idResult;
+        return "redirect:/product/item/" + idResult;
     }
 
     @GetMapping("/delete/{idProduct}")
@@ -40,7 +40,7 @@ public class ProductController {
         if (productService.deleteProduct(idProduct)) {
             return "redirect:/product/catalog";
         } else {
-            return "error/404";
+            return "error/er404";
         }
     }
 
@@ -54,13 +54,13 @@ public class ProductController {
     @PostMapping("/edit/{idProduct}")
     public String editProduct(@PathVariable Long idProduct, @ModelAttribute("dto") ProductDto productDto) {
         if(productService.editProduct(idProduct, productDto)) {
-            return "redirect:/product/" + idProduct;
+            return "redirect:/product/item/" + idProduct;
         } else {
-            return "error/404";
+            return "error/er404";
         }
     }
 
-    @GetMapping("/{idProduct}")
+    @GetMapping("/item/{idProduct}")
     public String openProduct(@PathVariable Long idProduct, Model model) {
         model.addAttribute("form", productService.productEntityToDto(idProduct));
         return "productPage";

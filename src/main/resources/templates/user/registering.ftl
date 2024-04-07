@@ -4,21 +4,24 @@
 </head>
 <body>
 
-<div class="w-100 h-100 d-flex align-items-center justify-content-center">
-    <div class="col-md-8">
-        <form method="POST" action="/users/new">
-            <h2>Додати користувача</h2>
-            <div class="form-group">
-                <input name="username" type="text" class="form-control m-3" placeholder="Ім'я користувача"
-                       autofocus="true"/>
-                <input name="password" type="password" class="form-control m-3" placeholder="Пароль"/>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <div class="form-row justify-content-center">
-                    <button class="btn btn-primary p-3 w-50" type="submit">Зареєструвати</button>
-                </div>
-            </div>
-        </form>
-    </div>
+
+<div class="col-md-8">
+    <form method="POST" action="/user/register">
+        <h2>Додати користувача</h2>
+        <div class="form-group">
+            <label title="UserName: ">
+                <input name="username" type="text" placeholder="Ім'я користувача"/>
+            </label>
+            <label title="Password: ">
+                <input name="password" type="password" placeholder="Пароль"/>
+            </label>
+            <label title="Name: ">
+                <input type="text" name="name">
+            </label>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button type="submit">Зареєструвати</button>
+        </div>
+    </form>
 </div>
 
 </body>

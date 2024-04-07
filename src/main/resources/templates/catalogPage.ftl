@@ -9,7 +9,7 @@
 </head>
 <body>
     <#list products as product>
-        <a href="/product/${product.id}">product</a><br>
+        <a href="/product/item/${product.id}">product</a><br>
         name:${product.name}<br>
         inscription:${product.inscription}<br>
         price:${product.price}<br>
