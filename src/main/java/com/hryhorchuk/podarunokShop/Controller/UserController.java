@@ -5,10 +5,7 @@ import com.hryhorchuk.podarunokShop.Service.Implement.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/user")
@@ -29,5 +26,11 @@ public class UserController {
     public String addUser(@ModelAttribute UserDto userDto) {
         userService.createUser(userDto);
         return "redirect:/";
+    }
+
+    @GetMapping("/account/{userId}")
+    public String loadAccount(@PathVariable Long userId, Model model) {
+        model.addAttribute("info", userService.getUser(userId));
+        return "user/account";
     }
 }

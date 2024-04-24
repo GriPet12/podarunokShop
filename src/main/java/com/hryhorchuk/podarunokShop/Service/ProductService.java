@@ -8,6 +8,7 @@ public interface ProductService {
     Long addProduct(ProductDto productDto);
 
     boolean deleteProduct(Long idProduct);
+
     ProductDto productEntityToDto(Long idProduct);
 
     boolean editProduct(Long idProduct, ProductDto productDto);
