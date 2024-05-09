@@ -1,6 +1,8 @@
 package com.hryhorchuk.podarunokShop.Controller;
 
+import com.hryhorchuk.podarunokShop.Dto.ProductCardDto;
 import com.hryhorchuk.podarunokShop.Dto.ProductDto;
+import com.hryhorchuk.podarunokShop.Service.Implement.ProductCardServiceImpl;
 import com.hryhorchuk.podarunokShop.Service.Implement.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductServiceImpl productService;
+    private final ProductCardServiceImpl productCardService;
 
     @Autowired
-    public ProductController(ProductServiceImpl productService) {
+    public ProductController(ProductServiceImpl productService, ProductCardServiceImpl productCardService) {
+        this.productCardService = productCardService;
         this.productService = productService;
     }
 
@@ -61,8 +65,15 @@ public class ProductController {
     }
 
     @GetMapping("/item/{idProduct}")
-    public String openProduct(@PathVariable Long idProduct, Model model) {
+    public String openProduct(@PathVariable Long idProduct, ProductCardDto productCardDto, Model model) {
+        model.addAttribute("cardDto", productCardDto);
         model.addAttribute("form", productService.productEntityToDto(idProduct));
         return "productPage";
+    }
+
+    @PostMapping("/item/{idProduct}")
+    public String addToProductCard(@ModelAttribute("cardDto") ProductCardDto productCardDto, Model model) {
+        productCardService.addToCard(productCardDto);
+        return "redirect:/product/{idProduct}";
     }
 }

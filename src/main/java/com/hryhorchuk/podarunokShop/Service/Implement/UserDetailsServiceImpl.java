@@ -1,5 +1,7 @@
 package com.hryhorchuk.podarunokShop.Service.Implement;
 
+import com.hryhorchuk.podarunokShop.Dto.UserDto;
+import com.hryhorchuk.podarunokShop.Model.UserEntity;
 import com.hryhorchuk.podarunokShop.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +18,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(() ->
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("User not found!"));
+        return new UserDto(
+                user.getUsername(),
+                user.getPassword(),
+                user.getName(),
+                user.getUserRole()
+        );
     }
 }

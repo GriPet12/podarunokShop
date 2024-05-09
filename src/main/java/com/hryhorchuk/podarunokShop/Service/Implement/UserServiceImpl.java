@@ -1,6 +1,7 @@
 package com.hryhorchuk.podarunokShop.Service.Implement;
 
 import com.hryhorchuk.podarunokShop.Dto.UserDto;
+import com.hryhorchuk.podarunokShop.Dto.UserInfoDto;
 import com.hryhorchuk.podarunokShop.Model.UserEntity;
 import com.hryhorchuk.podarunokShop.Model.UserRole;
 import com.hryhorchuk.podarunokShop.Repository.UserRepository;
@@ -20,6 +21,21 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public UserInfoDto getUser(Long idUser) {
+        UserEntity user = userRepository.findByIdUser(idUser);
+        return new UserInfoDto(
+                user.getIdUser(),
+                user.getName(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getUserRole(),
+                user.getNumber(),
+                user.getAddress(),
+                user.getOrders()
+        );
     }
 
     @Override
