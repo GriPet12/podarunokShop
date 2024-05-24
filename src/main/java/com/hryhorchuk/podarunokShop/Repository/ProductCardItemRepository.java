@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductCardRepository extends CrudRepository<ProductCardEntity, Long> {
-    ProductCardEntity findByUserId(UserEntity userId);
-    Long getIdByUserId(UserEntity userId);
-    List<ProductCardItemEntity> findProductListByIdCard(Long idCard);
+public interface ProductCardItemRepository extends CrudRepository<ProductCardItemEntity, Long> {
+    ProductCardItemEntity findByProductId(Long productId);
 }

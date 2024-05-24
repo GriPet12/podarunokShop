@@ -2,27 +2,46 @@ package com.hryhorchuk.podarunokShop.Controller;
 
 import com.hryhorchuk.podarunokShop.Dto.ProductCardDto;
 import com.hryhorchuk.podarunokShop.Dto.ProductDto;
+import com.hryhorchuk.podarunokShop.Model.ProductCardItemEntity;
 import com.hryhorchuk.podarunokShop.Service.Implement.ProductCardServiceImpl;
 import com.hryhorchuk.podarunokShop.Service.Implement.ProductServiceImpl;
+import com.hryhorchuk.podarunokShop.Service.Implement.UserServiceImpl;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @Controller
 @RequestMapping("/product")
 public class ProductController {
     private final ProductServiceImpl productService;
+    private final UserServiceImpl userService;
     private final ProductCardServiceImpl productCardService;
 
     @Autowired
-    public ProductController(ProductServiceImpl productService, ProductCardServiceImpl productCardService) {
-        this.productCardService = productCardService;
+    public ProductController(ProductServiceImpl productService, UserServiceImpl userService, ProductCardServiceImpl productCardService) {
         this.productService = productService;
+        this.userService = userService;
+        this.productCardService = productCardService;
     }
 
     @GetMapping("/catalog")
-    public String catalogPage(Model model) {
+    public String catalogPage(HttpSession session, Model model) {
+        ArrayList<ProductCardItemEntity> list;
+
+        if (userService.checkIfUserAuth()) {
+            list = productService.getProductList();
+        } else {
+            list = productCardService.getProductCardItemsFromSession(session);
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+        }
+
+        model.addAttribute("productNums", list.size());
         model.addAttribute("products", productService.findAll());
         return "catalogPage";
     }
@@ -69,11 +88,5 @@ public class ProductController {
         model.addAttribute("cardDto", productCardDto);
         model.addAttribute("form", productService.productEntityToDto(idProduct));
         return "productPage";
-    }
-
-    @PostMapping("/item/{idProduct}")
-    public String addToProductCard(@ModelAttribute("cardDto") ProductCardDto productCardDto, Model model) {
-        productCardService.addToCard(productCardDto);
-        return "redirect:/product/{idProduct}";
     }
 }

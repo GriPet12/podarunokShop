@@ -1,13 +1,14 @@
 package com.hryhorchuk.podarunokShop.Service.Implement;
 
-import com.hryhorchuk.podarunokShop.Dto.UserDto;
 import com.hryhorchuk.podarunokShop.Dto.UserInfoDto;
 import com.hryhorchuk.podarunokShop.Model.UserEntity;
-import com.hryhorchuk.podarunokShop.Model.UserRole;
 import com.hryhorchuk.podarunokShop.Repository.UserRepository;
 import com.hryhorchuk.podarunokShop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,16 +16,61 @@ public class UserServiceImpl implements UserService {
 
     final private UserRepository userRepository;
 
-    final private BCryptPasswordEncoder passwordEncoder;
-
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public UserInfoDto getUser(Long idUser) {
+    public boolean checkIfUserAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated();
+    }
+
+    @Override
+    public Long getIdThisUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserEntity userDetails = (UserEntity) authentication.getPrincipal();
+            return userDetails.getUserId();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    @Override
+    public UserEntity save(UserEntity user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public UserEntity create(UserEntity user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("Користувач не існує");
+        }
+
+        return save(user);
+    }
+
+    @Override
+    public UserEntity getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Користувач не знайдений"));
+
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return this::getByUsername;
+    }
+
+    @Override
+    public UserEntity getCurrentUser() {
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByUsername(username);
+    }
+
+    @Override
+    public UserInfoDto getByIdUser(Long idUser) {
         UserEntity user = userRepository.findByIdUser(idUser);
         return new UserInfoDto(
                 user.getIdUser(),
@@ -36,20 +82,5 @@ public class UserServiceImpl implements UserService {
                 user.getAddress(),
                 user.getOrders()
         );
-    }
-
-    @Override
-    public void createUser(UserDto userDto) {
-        UserEntity user = new UserEntity(
-                null,
-                userDto.getName(),
-                userDto.getUsername(),
-                passwordEncoder.encode(userDto.getPassword()),
-                UserRole.ROLE_USER,
-                null,
-                null,
-                null
-        );
-        userRepository.save(user);
     }
 }

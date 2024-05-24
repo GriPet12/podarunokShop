@@ -21,6 +21,6 @@ public class OrderEntity {
     private UserEntity user;
 
     @Column(nullable = false)
-    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
-    private List<ProductEntity> products = new ArrayList<>();
+    @OneToMany(mappedBy = "idItem", fetch = FetchType.EAGER)
+    private List<ProductCardItemEntity> products = new ArrayList<>();
 }

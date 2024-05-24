@@ -6,24 +6,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @Entity
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCardEntity {
+public class ProductCardItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long idCard;
+    private Long idItem;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private UserEntity userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductEntity product;
 
-    @OneToMany(mappedBy = "idItem", fetch = FetchType.EAGER)
     @Column(nullable = false)
-    private List<ProductCardItemEntity> productList = new ArrayList<>();
+    private int quantity;
 }

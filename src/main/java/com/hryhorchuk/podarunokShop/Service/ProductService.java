@@ -1,6 +1,7 @@
 package com.hryhorchuk.podarunokShop.Service;
 
 import com.hryhorchuk.podarunokShop.Dto.ProductDto;
+import com.hryhorchuk.podarunokShop.Model.ProductCardItemEntity;
 
 import java.util.ArrayList;
 
@@ -14,4 +15,6 @@ public interface ProductService {
     boolean editProduct(Long idProduct, ProductDto productDto);
 
     ArrayList<ProductDto> findAll();
+
+    ArrayList<ProductCardItemEntity> getProductList();
 }
