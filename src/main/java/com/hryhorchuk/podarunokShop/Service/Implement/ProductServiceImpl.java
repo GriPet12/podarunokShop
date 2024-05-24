@@ -1,8 +1,12 @@
 package com.hryhorchuk.podarunokShop.Service.Implement;
 
 import com.hryhorchuk.podarunokShop.Dto.ProductDto;
+import com.hryhorchuk.podarunokShop.Model.ProductCardEntity;
+import com.hryhorchuk.podarunokShop.Model.ProductCardItemEntity;
 import com.hryhorchuk.podarunokShop.Model.ProductEntity;
+import com.hryhorchuk.podarunokShop.Repository.ProductCardRepository;
 import com.hryhorchuk.podarunokShop.Repository.ProductRepository;
+import com.hryhorchuk.podarunokShop.Repository.UserRepository;
 import com.hryhorchuk.podarunokShop.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +17,16 @@ import java.util.ArrayList;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final UserServiceImpl userServiceImpl;
+    private final ProductCardRepository productCardRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository){
+    public ProductServiceImpl(ProductRepository productRepository, UserServiceImpl userServiceImpl, ProductCardRepository productCardRepository, UserRepository userRepository){
         this.productRepository = productRepository;
+        this.userServiceImpl = userServiceImpl;
+        this.productCardRepository = productCardRepository;
+        this.userRepository = userRepository;
     }
 
     public Long addProduct(ProductDto productDto) {
@@ -87,5 +97,20 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return result;
+    }
+
+    @Override
+    public ArrayList<ProductCardItemEntity> getProductList() {
+        Long idUser = userServiceImpl.getIdThisUser();
+        ProductCardEntity productCard = productCardRepository.findByUserId(userRepository.findByIdUser(idUser));
+        ArrayList<ProductCardItemEntity> list;
+
+        if (productCard != null) {
+            list = (ArrayList<ProductCardItemEntity>) productCard.getProductList();
+        } else {
+            list = new ArrayList<>();
+        }
+
+        return list;
     }
 }

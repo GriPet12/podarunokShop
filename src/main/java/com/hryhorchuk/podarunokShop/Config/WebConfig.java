@@ -9,6 +9,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addRedirectViewController("/", "/product/catalog");
-        registry.addViewController("/login").setViewName("user/login");
+        registry.addRedirectViewController("/login", "/user/login");
     }
 }

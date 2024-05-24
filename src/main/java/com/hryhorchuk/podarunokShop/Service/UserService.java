@@ -1,9 +1,16 @@
 package com.hryhorchuk.podarunokShop.Service;
 
-import com.hryhorchuk.podarunokShop.Dto.UserDto;
 import com.hryhorchuk.podarunokShop.Dto.UserInfoDto;
+import com.hryhorchuk.podarunokShop.Model.UserEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
-    void createUser(UserDto userDto);
-    UserInfoDto getUser(Long idUser);
+    Long getIdThisUser();
+    boolean checkIfUserAuth();
+    UserEntity create(UserEntity user);
+    UserEntity save(UserEntity user);
+    UserEntity getByUsername(String username);
+    UserDetailsService userDetailsService();
+    UserEntity getCurrentUser();
+    UserInfoDto getByIdUser(Long idUser);
 }
