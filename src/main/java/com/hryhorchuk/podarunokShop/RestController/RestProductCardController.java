@@ -8,6 +8,7 @@ import com.hryhorchuk.podarunokShop.Service.Implement.ProductCardServiceImpl;
 import com.hryhorchuk.podarunokShop.Service.Implement.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -29,31 +30,40 @@ public class RestProductCardController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/item/{idProduct}")
+    @PutMapping("/item/{idProduct}")
     public ArrayList<ProductCardItemEntity> addToProductCard(@PathVariable Long idProduct, @RequestBody ProductCardDto productCardDto, HttpSession session) {
+        ArrayList<ProductCardItemEntity> list;
 
-        if(userService.getIdThisUser() != null) {
-            Long userId = userService.getIdThisUser();
-            productCardService.addToCardUser(userId, idProduct, productCardDto.getNumber());
-
-            return (ArrayList<ProductCardItemEntity>)
-                    productCardRepository.findProductListByIdCard(productCardRepository.getIdByUserId(userRepository.findByIdUser(userId)));
-        } else {
-            ArrayList<ProductCardItemEntity> list = (ArrayList<ProductCardItemEntity>)
-                    session.getAttribute("ProductCard");
-
-            if(list == null) {
-                list = productCardService.addToCardNewSession(idProduct, productCardDto.getNumber());
-                session.setAttribute(
-                        "ProductCard",
-                        list
-                );
-            } else {
-                list = productCardService.addToCardOldSession(list, idProduct, productCardDto.getNumber());
-                session.setAttribute("ProductCard", list);
-            }
-
-            return (ArrayList<ProductCardItemEntity>) session.getAttribute("ProductCard");
+        Integer number = productCardDto.getNumber();
+        if (number == null) {
+            throw new IllegalArgumentException("Number cannot be null");
         }
+
+        if (userService.getIdThisUser() != null) {
+            Long userId = userService.getIdThisUser();
+            productCardService.addToCardUser(userId, idProduct, number);
+
+            list = (ArrayList<ProductCardItemEntity>) productCardService.getProductCardItemsFromUser();
+        } else {
+            productCardService.addToSession(session, idProduct, number);
+
+            list = productCardService.getProductCardItemsFromSession(session);
+        }
+
+        return list;
+    }
+
+
+    @GetMapping("/product-card")
+    public ArrayList<ProductCardItemEntity> productCardView(Model model, HttpSession session) {
+        ArrayList<ProductCardItemEntity> list;
+        if (userService.getIdThisUser() != null) {
+            list = (ArrayList<ProductCardItemEntity>) productCardService.getProductCardItemsFromUser();
+        } else {
+            list = productCardService.getProductCardItemsFromSession(session);
+        }
+        model.addAttribute("card", list);
+
+        return list;
     }
 }

@@ -20,6 +20,7 @@ public class UserInfoDto {
     private String password;
     private UserRole userRole;
     private String number;
-    private String address;
+    private String city;
+    private String department;
     private List<OrderEntity> orders;
 }

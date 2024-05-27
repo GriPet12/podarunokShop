@@ -8,10 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -42,9 +39,14 @@ public class ProductCardController {
 
     @GetMapping("/product-card")
     public String productCardView(Model model, HttpSession session) {
-        ArrayList<ProductCardItemEntity> list = productCardService.getProductCardItemsFromSession(session);
+        ArrayList<ProductCardItemEntity> list;
+        if (userService.getIdThisUser() != null) {
+            list = (ArrayList<ProductCardItemEntity>) productCardService.getProductCardItemsFromUser();
+        } else {
+            list = productCardService.getProductCardItemsFromSession(session);
+        }
         model.addAttribute("card", list);
 
-        return "ProductCard";
+        return "product/ProductCard";
     }
 }

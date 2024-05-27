@@ -31,12 +31,27 @@ public class UserServiceImpl implements UserService {
     public Long getIdThisUser() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserEntity userDetails = (UserEntity) authentication.getPrincipal();
-            return userDetails.getUserId();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return null;
+            }
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserEntity user) {
+                return user.getUserId();
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             return null;
         }
     }
+
+    @Override
+    public boolean userIsAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+    }
+
     @Override
     public UserEntity save(UserEntity user) {
         return userRepository.save(user);
@@ -45,7 +60,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity create(UserEntity user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Користувач не існує");
+            throw new RuntimeException("Користувач існує");
         }
 
         return save(user);
@@ -79,7 +94,8 @@ public class UserServiceImpl implements UserService {
                 user.getPassword(),
                 user.getUserRole(),
                 user.getNumber(),
-                user.getAddress(),
+                user.getCity(),
+                user.getDepartment(),
                 user.getOrders()
         );
     }

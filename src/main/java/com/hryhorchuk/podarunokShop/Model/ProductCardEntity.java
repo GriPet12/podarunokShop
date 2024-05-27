@@ -24,6 +24,5 @@ public class ProductCardEntity {
     private UserEntity userId;
 
     @OneToMany(mappedBy = "idItem", fetch = FetchType.EAGER)
-    @Column(nullable = false)
-    private List<ProductCardItemEntity> productList = new ArrayList<>();
+    private List<ProductCardItemEntity> productList;
 }
