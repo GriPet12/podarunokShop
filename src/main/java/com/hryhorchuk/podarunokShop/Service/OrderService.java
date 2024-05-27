@@ -1,9 +1,11 @@
 package com.hryhorchuk.podarunokShop.Service;
 
+import com.hryhorchuk.podarunokShop.Dto.OrderInfoDto;
 import com.hryhorchuk.podarunokShop.Model.OrderEntity;
+import com.hryhorchuk.podarunokShop.Model.ProductCardEntity;
 
 public interface OrderService {
-    boolean buyFromProductCard(Long userId);
-    void createOrder(Long userId, Long productCardId);
-    void sendOrder(OrderEntity OrderId);
+    void sendOrder(OrderEntity OrderId, OrderInfoDto info);
+    void buyFromProductSession(ProductCardEntity card, OrderInfoDto info);
+    void buyFromProductCard(Long userId, OrderInfoDto info);
 }

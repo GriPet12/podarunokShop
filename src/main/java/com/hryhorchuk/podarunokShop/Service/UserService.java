@@ -13,4 +13,6 @@ public interface UserService {
     UserDetailsService userDetailsService();
     UserEntity getCurrentUser();
     UserInfoDto getByIdUser(Long idUser);
+
+    boolean userIsAdmin();
 }

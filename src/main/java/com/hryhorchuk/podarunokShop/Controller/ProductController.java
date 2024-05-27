@@ -2,54 +2,37 @@ package com.hryhorchuk.podarunokShop.Controller;
 
 import com.hryhorchuk.podarunokShop.Dto.ProductCardDto;
 import com.hryhorchuk.podarunokShop.Dto.ProductDto;
-import com.hryhorchuk.podarunokShop.Model.ProductCardItemEntity;
-import com.hryhorchuk.podarunokShop.Service.Implement.ProductCardServiceImpl;
 import com.hryhorchuk.podarunokShop.Service.Implement.ProductServiceImpl;
 import com.hryhorchuk.podarunokShop.Service.Implement.UserServiceImpl;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/product")
 public class ProductController {
     private final ProductServiceImpl productService;
-    private final UserServiceImpl userService;
-    private final ProductCardServiceImpl productCardService;
+    private final UserServiceImpl userServiceImpl;
 
     @Autowired
-    public ProductController(ProductServiceImpl productService, UserServiceImpl userService, ProductCardServiceImpl productCardService) {
+    public ProductController(ProductServiceImpl productService, UserServiceImpl userServiceImpl) {
         this.productService = productService;
-        this.userService = userService;
-        this.productCardService = productCardService;
+        this.userServiceImpl = userServiceImpl;
     }
 
     @GetMapping("/catalog")
-    public String catalogPage(HttpSession session, Model model) {
-        ArrayList<ProductCardItemEntity> list;
-
-        if (userService.checkIfUserAuth()) {
-            list = productService.getProductList();
-        } else {
-            list = productCardService.getProductCardItemsFromSession(session);
-            if (list == null) {
-                list = new ArrayList<>();
-            }
-        }
-
-        model.addAttribute("productNums", list.size());
+    public String catalogPage(Model model) {
         model.addAttribute("products", productService.findAll());
-        return "catalogPage";
+        return "product/catalogPage";
     }
 
     @GetMapping("/add")
     public String addPage(ProductDto productDto, Model model) {
         model.addAttribute("dto", productDto);
-        return "addPage";
+        return "product/addPage";
     }
 
     @PostMapping("/add")
@@ -62,31 +45,33 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long idProduct) {
         if (productService.deleteProduct(idProduct)) {
             return "redirect:/product/catalog";
-        } else {
-            return "error/er404";
         }
+        return null;
     }
 
     @GetMapping("/edit/{idProduct}")
     public String editProductLoadPage(@PathVariable Long idProduct, Model model) {
         ProductDto productDto = productService.productEntityToDto(idProduct);
         model.addAttribute("dto", productDto);
-        return "editPage";
+        return "product/editPage";
     }
 
     @PostMapping("/edit/{idProduct}")
     public String editProduct(@PathVariable Long idProduct, @ModelAttribute("dto") ProductDto productDto) {
         if(productService.editProduct(idProduct, productDto)) {
             return "redirect:/product/item/" + idProduct;
-        } else {
-            return "error/er404";
         }
+        return null;
     }
 
     @GetMapping("/item/{idProduct}")
     public String openProduct(@PathVariable Long idProduct, ProductCardDto productCardDto, Model model) {
         model.addAttribute("cardDto", productCardDto);
         model.addAttribute("form", productService.productEntityToDto(idProduct));
-        return "productPage";
+
+        boolean isAdmin = userServiceImpl.userIsAdmin();
+        model.addAttribute("isAdmin", isAdmin);
+
+        return "product/productPage";
     }
 }

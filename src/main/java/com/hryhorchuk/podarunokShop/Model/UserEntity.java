@@ -42,7 +42,10 @@ public class UserEntity implements UserDetails {
     private String number;
 
     @Column
-    private String address;
+    private String city;
+
+    @Column
+    private String department;
 
     @Column
     @OneToMany(mappedBy = "idOrder", fetch = FetchType.EAGER)

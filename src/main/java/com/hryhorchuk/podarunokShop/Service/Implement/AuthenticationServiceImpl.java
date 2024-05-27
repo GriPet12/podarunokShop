@@ -28,7 +28,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserEntity user = new UserEntity(
                 request.getUsername(),
                 passwordEncoder.encode(request.getPassword()),
-                UserRole.ROLE_USER);
+                UserRole.ROLE_USER
+                );
 
         JwtTokenDto jwt = new JwtTokenDto(jwtService.generateToken(user));
 

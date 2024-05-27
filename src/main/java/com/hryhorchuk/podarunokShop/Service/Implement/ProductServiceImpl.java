@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ArrayList<ProductCardItemEntity> getProductList() {
         Long idUser = userServiceImpl.getIdThisUser();
-        ProductCardEntity productCard = productCardRepository.findByUserId(userRepository.findByIdUser(idUser));
+        ProductCardEntity productCard = productCardRepository.findByUserId(userRepository.findByIdUser(idUser)).get();
         ArrayList<ProductCardItemEntity> list;
 
         if (productCard != null) {

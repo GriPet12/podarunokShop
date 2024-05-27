@@ -5,10 +5,11 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 @Setter
-public class ProductCardDto {
-    private Long productId;
-    private Integer number;
+public class OrderInfoDto {
+    String name;
+    String number;
+    String city;
+    String department;
 }
